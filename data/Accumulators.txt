@@ -1,0 +1,15 @@
+C4H6 9
+HandleOneLevelAugmentation  totalCalls:73 totalTime:    550.73 msec machines:1 variance 0
+IsMoleculeValid  totalCalls:0 totalTime:      0.00 msec machines:0 variance 0
+GCTimeAccumulator
+GC Time Max Allocation 55M
+
+LogRareEventsAccumulator
+ None
+MemoryUsage
+Mem Use Max Allocation 55M
+Allocated
+
+Total all Functions
+ totalCalls:73 totalTime:    550.73 msec machines:1 variance 0
+Total Run Time in 52.447 hour
