@@ -40,6 +40,8 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
     private int[] maxHRem;
     
     private transient IAtomTypeMatcher a_matcher; // make lazy Slewis
+    private transient SaturationChecker a_satCheck; // SLewis be lazy to help serialization
+    private transient CDKHydrogenAdder a_hAdder; // SLewis be lazy to help serialization
 
     public IAtomTypeMatcher getMatcher() {
         if(a_matcher == null)    {
@@ -53,7 +55,7 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
     public HCountValidator() {
         hCount = 0;
  //        matcher = new StructGenMatcher();
-		a_satCheck = new SaturationChecker();
+		a_satCheck = null; //new SaturationChecker();
 //        failConnectivity = AccumulatorUtilities.getInstance().createAccumulator("failConnectivity");
 //        failHydrogens = AccumulatorUtilities.getInstance().createAccumulator("failHydrogens");
     }
@@ -105,29 +107,36 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
         isConnected(atomContainer);
     }
 
+    private transient int incorrectCount = 0;
+    private transient int incorrectConnect = 0;
+    private transient int incorrectHydrogens = 0;
+
     public boolean isValidMol(IAtomContainer atomContainer, int size) {
 //        System.out.print("validating " + test.AtomContainerPrinter.toString(atomContainer));
         int atomCount = atomContainer.getAtomCount();
 
+
         boolean countCorrect = atomCount == size;
         if(!countCorrect) {
+            System.err.println("count not correct " + incorrectCount++);
             return false;
         }
-        boolean connected = isConnected(atomContainer);
+         boolean connected = isConnected(atomContainer);
         if(!connected) {
  //           getFailConnectivity().add(1L);
+            System.err.println("connect not correct " + incorrectCount++);
             return false;
         }
-        boolean b = hydrogensCorrect(atomContainer);
+         boolean b = hydrogensCorrect(atomContainer);
         if(!b) {
 //            getFailHydrogens().add(1L);
+            System.err.println("Hydrogens not correct " + incorrectHydrogens++);
             return false;
         }
 
         return true;
     }
     
-    private transient CDKHydrogenAdder a_hAdder; // SLewis be lazy to help serialization
 
     public CDKHydrogenAdder getHAdder() {
         if(a_hAdder == null) {
@@ -138,11 +147,10 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
         return a_hAdder;
     }
 
-    private transient SaturationChecker a_satCheck; // SLewis be lazy to help serialization
 
 
     public SaturationChecker getSatCheck() {
-        if(a_hAdder == null) {
+        if(a_satCheck == null) {
              a_satCheck = new SaturationChecker();
         }
 

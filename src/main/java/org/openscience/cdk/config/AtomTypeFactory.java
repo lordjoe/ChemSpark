@@ -20,24 +20,13 @@
  */
 package org.openscience.cdk.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import org.openscience.cdk.annotations.*;
+import org.openscience.cdk.exception.*;
+import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.tools.*;
 
-import org.openscience.cdk.annotations.TestClass;
-import org.openscience.cdk.annotations.TestMethod;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.exception.NoSuchAtomTypeException;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomType;
-import org.openscience.cdk.interfaces.IChemObjectBuilder;
-import org.openscience.cdk.interfaces.IPseudoAtom;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import java.io.*;
+import java.util.*;
 
 /**
  *  General class for defining AtomTypes. This class itself does not define the
@@ -75,7 +64,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  * @see        IAtomTypeConfigurator
  */
 @TestClass("org.openscience.cdk.config.AtomTypeFactoryTest")
-public class AtomTypeFactory {
+public class AtomTypeFactory implements Serializable {
 
     /**
      *  Used as an ID to describe the atom type.

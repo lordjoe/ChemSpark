@@ -121,10 +121,10 @@ public class SparkAtomGenerator implements Serializable {
         IsMoleculeValid moleculeValid = new IsMoleculeValid();
         for (int i = index + 1; i <  maxIndex; i++) {
             aug1 = aug1.flatMap(new HandleOneLevelAugmentation(i));
-//            if(numberPartitions < MAX_PARITIONS)   {
-//                numberPartitions *=  numberAtoms;
-//                aug1 = aug1.repartition(numberPartitions); // spread the work
-//            }
+            if(numberPartitions < MAX_PARITIONS)   {
+                numberPartitions *=  numberAtoms;
+                aug1 = aug1.repartition(numberPartitions); // spread the work
+             }
         }
         long[] counts = new long[1];
         aug1 = SparkUtilities.persistAndCount("Before Filter", aug1, counts);

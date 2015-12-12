@@ -38,7 +38,7 @@ import java.util.*;
  */
 public class SilentChemObjectBuilder implements IChemObjectBuilder {
 
-	private static IChemObjectBuilder instance = null;
+	private static transient IChemObjectBuilder instance = null;
 	
 	private SilentChemObjectBuilder() {}
 

@@ -21,10 +21,10 @@
  */
 package org.openscience.cdk.atomtype;
 
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomType;
+import org.openscience.cdk.exception.*;
+import org.openscience.cdk.interfaces.*;
+
+import java.io.*;
 
 /**
  * Classes that implement this interface are atom type matchers. They find the
@@ -37,7 +37,7 @@ import org.openscience.cdk.interfaces.IAtomType;
  * 
  * @see         IAtomTypeGuesser
  */
-public interface IAtomTypeMatcher {
+public interface IAtomTypeMatcher extends Serializable /* added slewis */{
 
      /**
       * Method that assigns an atom type to a given atom belonging to an atom 
