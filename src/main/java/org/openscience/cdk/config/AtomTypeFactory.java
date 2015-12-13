@@ -270,7 +270,8 @@ public class AtomTypeFactory implements Serializable {
     public IAtomType getAtomType(String identifier) throws NoSuchAtomTypeException
 	{
         for (IAtomType atomType : atomTypes) {
-            if (atomType.getAtomTypeName().equals(identifier)) {
+            String atomTypeName = atomType.getAtomTypeName();   // refactor for debugginh slewis
+            if (atomTypeName.equals(identifier)) {
                 return atomType;
             }
         }

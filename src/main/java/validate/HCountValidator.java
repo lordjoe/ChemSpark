@@ -43,12 +43,13 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
     private transient SaturationChecker a_satCheck; // SLewis be lazy to help serialization
     private transient CDKHydrogenAdder a_hAdder; // SLewis be lazy to help serialization
 
+
+
     public IAtomTypeMatcher getMatcher() {
         if(a_matcher == null)    {
             IChemObjectBuilder builder = SilentChemObjectBuilder.getInstance();
             a_matcher = CDKAtomTypeMatcher.getInstance(builder);
-
-        }
+         }
         return a_matcher;
     }
 
@@ -112,31 +113,40 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
     private transient int incorrectHydrogens = 0;
 
     public boolean isValidMol(IAtomContainer atomContainer, int size) {
-//        System.out.print("validating " + test.AtomContainerPrinter.toString(atomContainer));
-        int atomCount = atomContainer.getAtomCount();
-
-
-        boolean countCorrect = atomCount == size;
-        if(!countCorrect) {
-            System.err.println("count not correct " + incorrectCount++);
+        if(!isValidMolConnected(  atomContainer,   size))
             return false;
-        }
-         boolean connected = isConnected(atomContainer);
-        if(!connected) {
- //           getFailConnectivity().add(1L);
-            System.err.println("connect not correct " + incorrectCount++);
-            return false;
-        }
-         boolean b = hydrogensCorrect(atomContainer);
+        return isHydrogensCorrect(atomContainer);
+    }
+
+    public boolean isHydrogensCorrect(final IAtomContainer atomContainer) {
+        boolean b = hydrogensCorrect(atomContainer);
         if(!b) {
 //            getFailHydrogens().add(1L);
-            System.err.println("Hydrogens not correct " + incorrectHydrogens++);
+//            System.err.println("Hydrogens not correct " + incorrectHydrogens++);
             return false;
         }
-
         return true;
     }
-    
+
+    public boolean isValidMolConnected(IAtomContainer atomContainer, int size) {
+ //        System.out.print("validating " + test.AtomContainerPrinter.toString(atomContainer));
+         int atomCount = atomContainer.getAtomCount();
+
+
+         boolean countCorrect = atomCount == size;
+         if(!countCorrect) {
+  //           System.err.println("count not correct " + incorrectCount++);
+             return false;
+         }
+          boolean connected = isConnected(atomContainer);
+         if(!connected) {
+  //           getFailConnectivity().add(1L);
+  //           System.err.println("connect not correct " + incorrectConnect++);
+             return false;
+         }
+           return true;
+     }
+
 
     public CDKHydrogenAdder getHAdder() {
         if(a_hAdder == null) {

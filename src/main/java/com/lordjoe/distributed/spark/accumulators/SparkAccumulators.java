@@ -2,7 +2,7 @@ package com.lordjoe.distributed.spark.accumulators;
 
 import com.lordjoe.algorithms.*;
 import com.lordjoe.distributed.*;
- import com.lordjoe.distributed.spark.*;
+import com.lordjoe.distributed.spark.*;
 import com.lordjoe.utilities.*;
 import org.apache.spark.*;
 import org.apache.spark.api.java.*;
@@ -29,7 +29,7 @@ public class SparkAccumulators implements ISparkAccumulators {
             me = new SparkAccumulators();
             AccumulatorUtilities.setInstance(me);
         }
-         me.createSpecialAccumulator(LogRareEventsAccumulator.LOG_RARE_EVENTS_NAME, LogRareEventsAccumulator.PARAM_INSTANCE, LogRareEventsAccumulator.empty());
+        me.createSpecialAccumulator(LogRareEventsAccumulator.LOG_RARE_EVENTS_NAME, LogRareEventsAccumulator.PARAM_INSTANCE, LogRareEventsAccumulator.empty());
         me.createSpecialAccumulator(MEMORY_ACCUMULATOR_NAME, MemoryUseAccumulator.PARAM_INSTANCE, MemoryUseAccumulator.empty());
         me.createSpecialAccumulator(GCTimeAccumulator.GCTIME_ACCUMULATOR_NAME,
                 GCTimeAccumulator.PARAM_INSTANCE, GCTimeAccumulator.empty());
@@ -188,13 +188,25 @@ public class SparkAccumulators implements ISparkAccumulators {
      * NOTE - call only in the Executor
      */
     public static void showAccumulators(ElapsedTimer totalTime) {
+        showAccumulators(totalTime, true);
+    }
+
+
+    /**
+     * append lines for all accumulators to System.out
+     * NOTE - call only in the Executor
+     */
+    public static void showAccumulators(ElapsedTimer totalTime, boolean saveFile) {
         System.out.println("=========================================");
         System.out.println("====  Accululators              =========");
         System.out.println("=========================================");
         showAccumulators(System.out, totalTime);
-        PrintWriter savedAccumulators = SparkUtilities.getHadoopPrintWriter("Accumulators.txt");
-        showAccumulators(savedAccumulators, totalTime);
-        savedAccumulators.close();
+        if (saveFile) {
+            PrintWriter savedAccumulators = SparkUtilities.getHadoopPrintWriter("Accumulators.txt");
+            showAccumulators(savedAccumulators, totalTime);
+            savedAccumulators.close();
+
+        }
     }
 
 
@@ -317,8 +329,6 @@ public class SparkAccumulators implements ISparkAccumulators {
         }
         return ret;
     }
-
-
 
 
     /**

@@ -1,6 +1,7 @@
 package com.lordjoe.molgen;
 
 import com.lordjoe.distributed.*;
+import com.lordjoe.distributed.spark.accumulators.*;
 import com.lordjoe.utilities.*;
 import org.apache.log4j.*;
 import org.apache.spark.*;
@@ -80,9 +81,9 @@ public class VariantCounter {
 
         long varientCount = generator.getCount();
         System.out.println("Found " + varientCount + " Varients of " + formula);
-        timer.formatElapsed(formula) ;
+        timer.showElapsed(formula); ;
      //   AtomAugmentation.showTries();
-      //  SparkAccumulators.showAccumulators(timer);
+        SparkAccumulators.showAccumulators(timer,false);
 
 
     }

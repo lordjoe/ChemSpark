@@ -10,8 +10,10 @@ import branch.*;
 import com.lordjoe.distributed.*;
 import com.lordjoe.distributed.spark.accumulators.*;
 import org.apache.spark.api.java.*;
+import org.openscience.cdk.atomtype.*;
 import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.silent.*;
+import org.openscience.cdk.tools.*;
 import org.openscience.cdk.tools.manipulator.*;
 import org.systemsbiology.xtandem.*;
 import validate.*;
@@ -118,24 +120,41 @@ public class SparkAtomGenerator implements Serializable {
         JavaSparkContext currentContext = SparkUtilities.getCurrentContext();
 
         JavaRDD<Augmentation<IAtomContainer>> aug1 = augmentor.sparkAugment(augment);
-        IsMoleculeValid moleculeValid = new IsMoleculeValid();
-        for (int i = index + 1; i <  maxIndex; i++) {
+        for (int i = index + 1; i < maxIndex; i++) {
             aug1 = aug1.flatMap(new HandleOneLevelAugmentation(i));
-            if(numberPartitions < MAX_PARITIONS)   {
-                numberPartitions *=  numberAtoms;
-                aug1 = aug1.repartition(numberPartitions); // spread the work
+            if (numberPartitions < MAX_PARITIONS) {
+                numberPartitions *= numberAtoms;
              }
+            aug1 = aug1.repartition(numberPartitions); // spread the work
         }
         long[] counts = new long[1];
-        aug1 = SparkUtilities.persistAndCount("Before Filter", aug1, counts);
+        //  aug1 = SparkUtilities.persistAndCount("Before Filter", aug1, counts);
 
-        System.out.println("Before Filter" + counts[0]);
-        aug1 = aug1.filter(moleculeValid);
 
-        aug1 = SparkUtilities.persistAndCount("After Filter", aug1, counts);
+        IsMoleculeConnected moleculeConnected = new IsMoleculeConnected();
+        aug1 = aug1.filter(moleculeConnected);
+        //    aug1 = SparkUtilities.persistAndCount("After Connected Filter", aug1, counts);
 
-        System.out.println("After Filter" + counts[0]);
-        setCount((int) aug1.count()); // now force execution
+
+        IAtomTypeMatcher matcher = hCountValidator.getMatcher();
+        SaturationChecker satCheck = hCountValidator.getSatCheck();
+        CDKHydrogenAdder hAdder = hCountValidator.getHAdder();
+
+        IsHydrogensCorrect hydrogensCorrect = new IsHydrogensCorrect();
+        aug1 = aug1.filter(hydrogensCorrect);
+
+        // we could place a handler here
+        long count = aug1.count();  // force all the work here
+ //       aug1 = SparkUtilities.persistAndCount("After Hydrogen Filter", aug1, counts);
+
+        setCount((int)count);
+
+//        IsMoleculeValid moleculeValid = new IsMoleculeValid();
+//        aug1 = aug1.filter(moleculeValid);
+//
+//        aug1 = SparkUtilities.persistAndCount("After Molecule Valid", aug1, counts);
+
+//        setCount((int) aug1.count()); // now force execution
         System.out.println("Count is " + getCount());
     }
 
@@ -211,6 +230,49 @@ public class SparkAtomGenerator implements Serializable {
             return ret;
         }
     }
+
+    /**
+     * call handler for all valid molecules and return false (no more processing )
+     * return true for all other cases
+     */
+    private class IsMoleculeConnected extends AbstractLoggingFunction<Augmentation<IAtomContainer>, Boolean> {
+
+
+        @Override
+        public Boolean doCall(final Augmentation<IAtomContainer> v1) throws Exception {
+            IAtomContainer atomContainer = v1.getAugmentedMolecule();
+            return handleValidConnectedMolecule(atomContainer);
+        }
+
+
+    }
+
+    protected Boolean handleValidConnectedMolecule(final IAtomContainer pAtomContainer) {
+        boolean validMol = hCountValidator.isValidMolConnected(pAtomContainer, maxIndex + 1);
+        return validMol;
+    }
+
+    /**
+     * call handler for all valid molecules and return false (no more processing )
+     * return true for all other cases
+     */
+    private class IsHydrogensCorrect extends AbstractLoggingFunction<Augmentation<IAtomContainer>, Boolean> {
+
+
+        @Override
+        public Boolean doCall(final Augmentation<IAtomContainer> v1) throws Exception {
+            IAtomContainer atomContainer = v1.getAugmentedMolecule();
+            return handleHydrogensCorrect(atomContainer);
+        }
+
+
+    }
+
+    protected Boolean handleHydrogensCorrect(final IAtomContainer pAtomContainer) {
+        boolean validMol = hCountValidator.isHydrogensCorrect(pAtomContainer);
+        return validMol;
+    }
+
 
     /**
      * call handler for all valid molecules and return false (no more processing )
