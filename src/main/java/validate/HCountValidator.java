@@ -119,13 +119,21 @@ public class HCountValidator extends BaseChildLister implements MoleculeValidato
     }
 
     public boolean isHydrogensCorrect(final IAtomContainer atomContainer) {
-        boolean b = hydrogensCorrect(atomContainer);
-        if(!b) {
-//            getFailHydrogens().add(1L);
-//            System.err.println("Hydrogens not correct " + incorrectHydrogens++);
-            return false;
+        if(atomContainer == null)
+            return false; //added SLewis - is this possible
+        try {
+            boolean b = hydrogensCorrect(atomContainer);
+            if(!b) {
+    //            getFailHydrogens().add(1L);
+    //            System.err.println("Hydrogens not correct " + incorrectHydrogens++);
+                return false;
+            }
+            return true;
         }
-        return true;
+        catch (NullPointerException pE) {
+            return false;  //added SLewis - is this possible
+
+        }
     }
 
     public boolean isValidMolConnected(IAtomContainer atomContainer, int size) {

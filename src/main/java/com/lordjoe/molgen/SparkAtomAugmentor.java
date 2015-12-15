@@ -10,7 +10,9 @@ import org.openscience.cdk.silent.*;
 import java.util.*;
 
 /**
- * copy of AtomAugmentor
+ * com.lordjoe.molgen.SparkAtomAugmentor
+ * copy of AtomAugmentor augmented to return results as a JavaRDD as well as a list
+ * SLewis
  */
 public class SparkAtomAugmentor implements SparkAugmentor<IAtomContainer> {
     

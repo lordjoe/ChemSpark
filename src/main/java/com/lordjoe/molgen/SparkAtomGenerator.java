@@ -22,8 +22,10 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * com.lordjoe.molgen.SparkAtomGenerator
  * similar to AtomGenerator but allows multiple handlers and
- * is immutable
+ * is immutable  and runs spark code
+ * SLewis
  */
 public class SparkAtomGenerator implements Serializable {
 
@@ -111,7 +113,7 @@ public class SparkAtomGenerator implements Serializable {
 
     }
 
-    public static final int MAX_PARITIONS = 120;
+    public static final int MAX_PARITIONS = 800;     // was 120 - lets try more
 
     public void run(Augmentation<IAtomContainer> init, int index) {
         List<Augmentation<IAtomContainer>> augment = augmentor.augment(init);
@@ -125,7 +127,11 @@ public class SparkAtomGenerator implements Serializable {
             if (numberPartitions < MAX_PARITIONS) {
                 numberPartitions *= numberAtoms;
              }
-            aug1 = aug1.repartition(numberPartitions); // spread the work
+            else {
+                 numberPartitions  = (int)(1.3 * numberPartitions);
+            }
+            if(i < (maxIndex - 1))
+                aug1 = aug1.repartition(numberPartitions); // spread the work
         }
         long[] counts = new long[1];
         //  aug1 = SparkUtilities.persistAndCount("Before Filter", aug1, counts);

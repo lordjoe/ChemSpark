@@ -41,13 +41,20 @@ public class AlkyneTests extends  FormulaTest {
         junit.framework.Assert.assertEquals(77, c6H10);
     }
 
-   // @Test   // added SLewis
-    public void c12H20Test() {
-        ElapsedTimer timer = new ElapsedTimer();
-        int c12H20 = countNFromAtom("C12H20");
-//        Assert.assertEquals(77, c12H20);
-        timer.showElapsed("C12H20 - found " + c12H20);
-    }
+    // @Test   // added SLewis
+     public void c12H20Test() {
+         ElapsedTimer timer = new ElapsedTimer();
+         int c12H20 = countNFromAtom("C12H20");
+ //        Assert.assertEquals(77, c12H20);
+         timer.showElapsed("C12H20 - found " + c12H20);
+     }
+     @Test   // added SLewis
+     public void c11H18Test() {
+         ElapsedTimer timer = new ElapsedTimer();
+         int c12H20 = countNFromAtom("C11H18");
+ //        Assert.assertEquals(77, c12H20);
+         timer.showElapsed("C11H18 - found " + c12H20);
+     }
 
     //   @Test   // added SLewis for bigger run
     public void c10H18Test() {
