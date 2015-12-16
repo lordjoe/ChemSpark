@@ -37,12 +37,12 @@ public class FormulaTest {
         if (!option.isDefined()) {   // use local over nothing
             sparkConf.setMaster("local[*]");
         }
-       SparkAtomGenerator generator = new SparkAtomGenerator(formula);
-        SparkAccumulatorCountingHandler handler = new SparkAccumulatorCountingHandler(formula);
-        generator.addHandler(handler);
+     SparkAtomGenerator generator = new SparkAtomGenerator(formula);
+      //  SparkAccumulatorCountingHandler handler = new SparkAccumulatorCountingHandler(formula);
+      //  generator.addHandler(handler);
 
         generator.run();
-        return (int)handler.getCount();
+        return (int)generator.getCount();
     }
 
 }

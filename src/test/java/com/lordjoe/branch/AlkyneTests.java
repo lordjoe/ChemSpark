@@ -48,7 +48,7 @@ public class AlkyneTests extends  FormulaTest {
  //        Assert.assertEquals(77, c12H20);
          timer.showElapsed("C12H20 - found " + c12H20);
      }
-     @Test   // added SLewis
+     // @Test   // added SLewis
      public void c11H18Test() {
          ElapsedTimer timer = new ElapsedTimer();
          int c12H20 = countNFromAtom("C11H18");
@@ -64,7 +64,7 @@ public class AlkyneTests extends  FormulaTest {
         timer.showElapsed("C10H18- found " + c12H20);  // this test took 89 minutes
     }
 
-     @Test   // added SLewis for bigger run
+    // @Test   // added SLewis for bigger run
     public void c9H16Test() {
         ElapsedTimer timer = new ElapsedTimer();
         int c12H20 = countNFromAtom("C9H16");
