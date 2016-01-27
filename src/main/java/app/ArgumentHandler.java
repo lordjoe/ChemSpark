@@ -1,11 +1,5 @@
 package app;
 
-import generate.AugmentationMethod;
-import generate.LabellerMethod;
-import generate.ListerMethod;
-import generate.ValidatorMethod;
-import handler.DataFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +9,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
+import handler.DataFormat;
 
 public class ArgumentHandler {
     
@@ -94,21 +90,6 @@ public class ArgumentHandler {
     private String rangeString;
   
     /**
-     * The child listing method to use.
-     */
-    private ListerMethod listerMethod;
-    
-    /**
-     * The child listing labeller method to use.
-     */
-    private LabellerMethod labellerMethod;
-    
-    /**
-     * The canonical validation method to use.
-     */
-    private ValidatorMethod validatorMethod;
-    
-    /**
      * Atom or Bond augmentation
      */
     private AugmentationMethod augmentationMethod;
@@ -133,9 +114,6 @@ public class ArgumentHandler {
         options.addOption(opt("z", "Compress (zip) the output"));
 
         // long options
-        options.addOption(lopt("lister", "method", "Lister method for children (FILTER, SYMMETRIC)"));
-        options.addOption(lopt("labeller", "method", "Labeller method for filtering children (REFINER, SIGNATURE)"));
-        options.addOption(lopt("validator", "method", "Validator method for canonical checking (REFINER, SIGNATURE)"));
         options.addOption(lopt("augmentation", "method", "Augmentation method (ATOM, BOND)"));
     }
     
@@ -220,24 +198,6 @@ public class ArgumentHandler {
         
         if (line.hasOption('z')) {
         	setZipOutput(true);
-        }
-        
-        if (line.hasOption("lister")) {
-            ListerMethod chosenLister = 
-                ListerMethod.valueOf(line.getOptionValue("lister"));
-            setListerMethod(chosenLister);
-        }
-        
-        if (line.hasOption("labeller")) {
-            LabellerMethod chosenLabeller = 
-                LabellerMethod.valueOf(line.getOptionValue("labeller"));
-            setLabellerMethod(chosenLabeller);
-        }
-        
-        if (line.hasOption("validator")) {
-            ValidatorMethod chosenValidator = 
-                ValidatorMethod.valueOf(line.getOptionValue("validator"));
-            setValidatorMethod(chosenValidator);
         }
         
         if (line.hasOption("augmentation")) {
@@ -440,21 +400,6 @@ public class ArgumentHandler {
         this.rangeString = rangeString;
     }
 
-    public ListerMethod getListerMethod() {
-        return listerMethod;
-    }
-
-    public void setListerMethod(ListerMethod listerMethod) {
-        this.listerMethod = listerMethod;
-    }
-
-    public ValidatorMethod getValidatorMethod() {
-        return this.validatorMethod;
-    }
-
-    public void setValidatorMethod(ValidatorMethod validatorMethod) {
-        this.validatorMethod = validatorMethod;
-    }
 
     public AugmentationMethod getAugmentationMethod() {
         return augmentationMethod;
@@ -464,14 +409,6 @@ public class ArgumentHandler {
         this.augmentationMethod = augmentationMethod;
     }
     
-    public void setLabellerMethod(LabellerMethod labellerMethod) {
-        this.labellerMethod = labellerMethod;
-    }
-
-    public LabellerMethod getLabellerMethod() {
-        return labellerMethod;
-    }
-
 	public boolean isZipOutput() {
 		return isZipOutput;
 	}

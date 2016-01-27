@@ -1,11 +1,16 @@
 package handler;
 
 
-import org.openscience.cdk.interfaces.*;
-import org.openscience.cdk.smiles.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
-import java.io.*;
-import java.util.*;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.smiles.SmilesGenerator;
 
 /**
  * Check each generated structure against a list of expected structures -
@@ -14,7 +19,7 @@ import java.util.*;
  * @author maclean
  *
  */
-public class ChecklistHandler implements GenerateHandler {
+public class ChecklistHandler implements Handler {
 	
 	/**
 	 * These are the ones we expect to see
@@ -39,22 +44,22 @@ public class ChecklistHandler implements GenerateHandler {
 			expectedList.add(line);
 		}
 		reader.close();
-		smilesGenerator = PrintStreamStringHandler.getOnlySmilesGenerator(); //SmilesGenerator.unique();
+		smilesGenerator = SmilesGenerator.unique();
 		checklist = new BitSet(expectedList.size());
 		this.surpriseList = new ArrayList<String>();
 	}
 
 	@Override
-	public void handle(IAtomContainer parent, IAtomContainer child) {
+	public void handle(IAtomContainer atomContainer) {
 		try {
-			String observed = PrintStreamStringHandler.getOnlySmilesGenerator().createSMILES(child); // .create(child);
+			String observed = smilesGenerator.create(atomContainer);
 			int index = expectedList.indexOf(observed);
 			if (index == -1) {
 				surpriseList.add(observed);
 			} else {
 				checklist.set(index);
 			}
-		} catch (Exception e) {
+		} catch (CDKException e) {
 			e.printStackTrace();
 		}
 	}

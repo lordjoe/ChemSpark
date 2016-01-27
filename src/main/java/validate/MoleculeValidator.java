@@ -1,11 +1,8 @@
 package validate;
 
-import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IAtomContainer;
 
-import java.io.*;
-import java.util.*;
-
-public interface MoleculeValidator extends Serializable {
+public interface MoleculeValidator {
     
     public void checkConnectivity(IAtomContainer atomContainer);
     
@@ -16,7 +13,5 @@ public interface MoleculeValidator extends Serializable {
 	public void setHCount(int hCount);
 	
     public void setImplicitHydrogens(IAtomContainer parent);
-
-    public void setElementSymbols(List<String> elementSymbols);
 
 }

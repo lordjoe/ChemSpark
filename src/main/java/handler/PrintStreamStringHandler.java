@@ -1,12 +1,18 @@
 package handler;
 
-import io.*;
-import org.openscience.cdk.exception.*;
-import org.openscience.cdk.interfaces.*;
-import org.openscience.cdk.signature.*;
-import org.openscience.cdk.smiles.*;
+import java.io.PrintStream;
 
-import java.io.*;
+import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomType;
+import org.openscience.cdk.signature.MoleculeSignature;
+import org.openscience.cdk.smiles.SmilesGenerator;
+import org.openscience.cdk.tools.CDKHydrogenAdder;
+import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
+
+import io.AtomContainerPrinter;
 
 
 
@@ -17,17 +23,8 @@ import java.io.*;
  * @author maclean
  *
  */
-public class PrintStreamStringHandler implements GenerateHandler {
-
-	private static transient SmilesGenerator onlySmilesGenerator;
-
-	/* 1,4,9 needs this */
-	public static SmilesGenerator getOnlySmilesGenerator() {
-		if(onlySmilesGenerator == null)
-			onlySmilesGenerator = new SmilesGenerator();
-		return onlySmilesGenerator;
-	}
-
+public class PrintStreamStringHandler implements Handler {
+	
 	private PrintStream printStream;
 	
 	private SmilesGenerator smilesGenerator;
@@ -38,70 +35,52 @@ public class PrintStreamStringHandler implements GenerateHandler {
 	
 	private boolean shouldNumberLines;
 	
-	private boolean showParent;
-	
 	public PrintStreamStringHandler() {
 		this(System.out, DataFormat.SMILES);
 	}
 	
 	public PrintStreamStringHandler(PrintStream printStream, DataFormat format) {
-	    this(printStream, format, false, false);
+	    this(printStream, format, false);
 	}
 	
 	public PrintStreamStringHandler(PrintStream printStream, 
 	                                DataFormat format, 
-	                                boolean numberLines,
-	                                boolean showParent) {
+	                                boolean numberLines) {
 		this.printStream = printStream;
 		this.format = format;
 		if (format == DataFormat.SMILES) {
-		    smilesGenerator = getOnlySmilesGenerator(); // changed slewis for old versiom SmilesGenerator.unique();
+		    smilesGenerator = SmilesGenerator.unique();
 		}
 		count = 0;
 		this.shouldNumberLines = numberLines;
-		this.showParent = showParent;
 	}
 
 	@Override
-	public void handle(IAtomContainer parent, IAtomContainer child) {
-	    String childString = getStringForm(child);
+	public void handle(IAtomContainer atomContainer) {
+	    String stringForm;
+	    try {
+	        stringForm = getStringForm(atomContainer);
+	    } catch (CDKException cdke) {
+	        stringForm = "EXCEPTION";  // XXX
+	    }
 	  
-	    if (showParent) {
-	        String parentString = getStringForm(parent);
-            printStream.println(count + "\t" + parentString + "\t" + childString); 
+	    if (shouldNumberLines) { 
+	        printStream.println(count + "\t" + stringForm);
 	    } else {
-	        if (shouldNumberLines) { 
-                printStream.println(count + "\t" + childString);
-            } else {
-                printStream.println(childString);
-            }
+	        printStream.println(stringForm);
 	    }
 	    count++;
 	}
 	
 	@Override
     public void finish() {
-		// Added SLewis to allow tests to keep running
-		PrintStream sysOut = System.out;
-		if(printStream == sysOut)
-			return; // do not close System.out
-		PrintStream sysErr = System.err;
-		if(printStream == sysErr)
-			return; // do not close System.out
-
 	    printStream.close();
     }
 
-    private String getStringForm(IAtomContainer atomContainer) {
-	    if (format == DataFormat.SMILES) {   // added slewis
-			try {
-				return smilesGenerator.createSMILES(atomContainer); // smilesGenerator.create(atomContainer);
-			}
-			catch ( Exception e) {
-				throw new RuntimeException(e);
-
-			}
-		} else if (format == DataFormat.SIGNATURE) {
+    private String getStringForm(IAtomContainer atomContainer) throws CDKException {
+	    if (format == DataFormat.SMILES) {
+	        return smilesGenerator.create(addHydrogens(atomContainer));
+	    } else if (format == DataFormat.SIGNATURE) {
 	        MoleculeSignature childSignature = new MoleculeSignature(atomContainer);
 	        return childSignature.toCanonicalString();
 	    } else if (format == DataFormat.ACP) {
@@ -110,4 +89,20 @@ public class PrintStreamStringHandler implements GenerateHandler {
             return "";  // XXX
         }
 	}
+    
+    private IAtomContainer addHydrogens(IAtomContainer mol) {
+        try {
+            CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(mol.getBuilder());
+            for (IAtom atom : mol.atoms()) {
+              IAtomType type;
+                type = matcher.findMatchingAtomType(mol, atom);
+              AtomTypeManipulator.configure(atom, type);
+            }
+            CDKHydrogenAdder adder = CDKHydrogenAdder.getInstance(mol.getBuilder());
+            adder.addImplicitHydrogens(mol); 
+        } catch (CDKException e) {
+            e.printStackTrace();
+        }
+        return mol;
+    }
 }

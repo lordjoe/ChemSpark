@@ -1,10 +1,11 @@
 package handler;
 
-import org.openscience.cdk.exception.*;
-import org.openscience.cdk.interfaces.*;
-import org.openscience.cdk.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import java.io.*;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.io.SDFWriter;
 
 /**
  * Prints the generated molecules to a print stream, defaulting to System out. 
@@ -12,25 +13,22 @@ import java.io.*;
  * @author maclean
  *
  */
-public class SDFHandler implements GenerateHandler {
+public class SDFHandler implements Handler {
 	
 	private SDFWriter writer;
-	private final boolean sysOutWriter;  // added slewis to say if writer is System.out
 	
 	public SDFHandler() {
         writer = new SDFWriter(System.out);
-		sysOutWriter = true;    // added slewis
     }
 	
 	public SDFHandler(String outfile) throws IOException {
 	    writer = new SDFWriter(new FileWriter(outfile));
-		sysOutWriter = false;     // added slewis
 	}
 
 	@Override
-	public void handle(IAtomContainer parent, IAtomContainer child) {
+	public void handle(IAtomContainer atomContainer) {
 	    try {
-            writer.write(child);
+            writer.write(atomContainer);
         } catch (CDKException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -40,8 +38,7 @@ public class SDFHandler implements GenerateHandler {
 	@Override
     public void finish() {
 	    try {
-			if(!sysOutWriter)  // added slewis - do not cluse System.out
-	        	writer.close();
+	        writer.close();
 	    } catch (IOException ioe) {
 	        // TODO
 	    }

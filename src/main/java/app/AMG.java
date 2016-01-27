@@ -1,10 +1,13 @@
 package app;
 
-import handler.*;
-import org.apache.commons.cli.*;
-import org.openscience.cdk.exception.*;
+import java.io.IOException;
 
-import java.io.*;
+import org.apache.commons.cli.ParseException;
+import org.openscience.cdk.exception.CDKException;
+
+import augment.AugmentingGenerator;
+import augment.AugmentingGeneratorFactory;
+import handler.DataFormat;
 
 public class AMG {
     
@@ -19,45 +22,32 @@ public class AMG {
     }
     
     public static void run(ArgumentHandler argsH) throws CDKException, IOException {
-        try {
-            AugmentingGenerator generator = AugmentingGeneratorFactory.build(argsH);
-            int heavyAtomCount = generator.getHeavyAtomCount();
-
-            if (argsH.isAugmentingFile() || argsH.isComparingToFile()) {
-                String inputFile = argsH.getInputFilepath();
-                if (inputFile == null) {
-                    error("No input file specified");
-                    return;
-                } else {
-                    if (argsH.isAugmentingFile()) {
-                        DataFormat inputFormat = argsH.getInputFormat();
-                        if (inputFormat == DataFormat.MOL) {
-                            SingleInputAugmentor.run(argsH, inputFile, generator, heavyAtomCount);
-                        } else {
-                            MutipleInputAugmentor.run(argsH, inputFile, generator, heavyAtomCount);
-                        }
-                    } else {
-                        FromScratchAugmentor.run(generator, heavyAtomCount);
-                    }
-                }
-            } else if (argsH.isStartingFromScratch()) {
-                FromScratchAugmentor.run(generator, heavyAtomCount);
+        AugmentingGenerator generator = AugmentingGeneratorFactory.build(argsH);
+        if (generator == null) {
+            return;
+        }
+        
+        if (argsH.isAugmentingFile() || argsH.isComparingToFile()) {
+            String inputFile = argsH.getInputFilepath();
+            if (inputFile == null) {
+                error("No input file specified");
+                return;
+            } else {
+            	if (argsH.isAugmentingFile()) {
+	                DataFormat inputFormat = argsH.getInputFormat();
+	                if (inputFormat == DataFormat.MOL) {
+	                    SingleInputAugmentor.run(argsH, inputFile, generator);
+	                } else {
+	                    MutipleInputAugmentor.run(argsH, inputFile, generator);
+	                }
+            	} else {
+            		generator.run();
+            	}
             }
-            generator.finish();
+        } else if (argsH.isStartingFromScratch()) {
+            generator.run();
         }
-        catch (IOException e) {
-            throw e;
-
-        }
-        catch (CDKException e) {
-            throw e;
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-         }
-        return; // break here slewis
+        generator.finish();
     }
     
     private static void error(String text) {

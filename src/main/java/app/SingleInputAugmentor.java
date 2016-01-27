@@ -1,7 +1,5 @@
 package app;
 
-import handler.DataFormat;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +9,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.io.MDLV2000Reader;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
+
+import augment.AugmentingGenerator;
+import handler.DataFormat;
 
 /**
  * For a single structure in an input file, augment up to the number of atoms remaining 
@@ -34,8 +35,7 @@ public class SingleInputAugmentor {
     public static void run(
             ArgumentHandler argsH,
             String inputFile, 
-            AugmentingGenerator generator,
-            int heavyAtomCount) throws CDKException, IOException {
+            AugmentingGenerator generator) throws CDKException, IOException {
         DataFormat inputFormat = argsH.getInputFormat();
         String filepath = argsH.getInputFilepath();
         InputStream in = new FileInputStream(filepath);
@@ -53,7 +53,7 @@ public class SingleInputAugmentor {
         if (parent == null) {
             error("Molecule null");
         } else {
-            generator.extend(parent, heavyAtomCount);
+            generator.run(parent);
         }
     }
 
