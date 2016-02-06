@@ -229,7 +229,7 @@ public class SparkDeployer {
         for (int i = 0; i < pathItems.length; i++) {
             String item = pathItems[i];
             String jarName = new File(item).getName();
-            if(jarName.contains("cdk"))  {
+            if(jarName.contains("org/openscience.cdk"))  {
                 pathholder.add(item);
                 continue;
             }

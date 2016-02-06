@@ -115,9 +115,11 @@ public class HydraKryoSerializer implements KryoRegistrator, Serializable {
          doRegistration(kryo, "com.lordjoe.distributed.spark.accumulators.SparkAccumulators");
         doRegistration(kryo, "com.lordjoe.utilities.ElapsedTimer");
         doRegistration(kryo, "org.systemsbiology.xtandem.XTandemMain");
+        doRegistration(kryo, "org.systemsbiology.xtandem.XTandemMain");
 
 
-        doRegistration(kryo, "com.lordjoe.distributed.spark.accumulators.AccumulatorUtilities");
+        doRegistration(kryo, "org.openscience.cdk.silent.AtomContainerSet");
+        doRegistration(kryo, "org.openscience.cdk.silent.Atom");
     }
 
 

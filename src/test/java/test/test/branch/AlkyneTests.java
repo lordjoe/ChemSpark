@@ -1,11 +1,12 @@
 package test.test.branch;
 
+import com.lordjoe.branch.*;
 import com.lordjoe.testing.*;
 import junit.framework.Assert;
-
 import org.junit.Test;
 
-public class AlkyneTests extends FormulaTest {
+public class
+AlkyneTests extends FormulaTest {
 
     @Test
     public void c2H2Test() {
@@ -14,12 +15,14 @@ public class AlkyneTests extends FormulaTest {
 
     @Test
     public void c3H4Test() {
-        Assert.assertEquals(3, countNFromAtom("C3H4"));
+        int c3H4 = countNFromAtom("C3H4");
+        Assert.assertEquals(3, c3H4);
     }
 
     @Test
     public void c4H6Test() {
-        Assert.assertEquals(9, countNFromAtom("C4H6"));
+        int c4H6 = countNFromAtom("C4H6");
+        Assert.assertEquals(9, c4H6);
     }
 
     @Test

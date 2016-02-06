@@ -1,7 +1,7 @@
 package com.lordjoe.molgen;
 
-import branch.*;
 import com.lordjoe.distributed.spark.accumulators.*;
+import handler.*;
 import org.apache.spark.*;
 import org.openscience.cdk.interfaces.*;
 
@@ -10,7 +10,7 @@ import org.openscience.cdk.interfaces.*;
  * User: Steve
  * Date: 12/2/2015
  */
-public class SparkAccumulatorCountingHandler implements Handler {
+public class SparkAccumulatorCountingHandler implements Handler<IAtomContainer> {
 
     public final String formula;
     private transient Accumulator<Long> count;
@@ -38,10 +38,13 @@ public class SparkAccumulatorCountingHandler implements Handler {
         return count;
     }
 
+
     @Override
-    public void handle(final IAtomContainer atomContainer) {
+    public void handle(final IAtomContainer object) {
+
         Accumulator<Long> countAccumulator = getCountAccumulator();
         countAccumulator.add(1L);  // accumulate total
+
     }
 
     @Override

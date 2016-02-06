@@ -29,10 +29,10 @@ public class SparkAccumulators implements ISparkAccumulators {
             me = new SparkAccumulators();
             AccumulatorUtilities.setInstance(me);
         }
-        me.createSpecialAccumulator(LogRareEventsAccumulator.LOG_RARE_EVENTS_NAME, LogRareEventsAccumulator.PARAM_INSTANCE, LogRareEventsAccumulator.empty());
-        me.createSpecialAccumulator(MEMORY_ACCUMULATOR_NAME, MemoryUseAccumulator.PARAM_INSTANCE, MemoryUseAccumulator.empty());
-        me.createSpecialAccumulator(GCTimeAccumulator.GCTIME_ACCUMULATOR_NAME,
-                GCTimeAccumulator.PARAM_INSTANCE, GCTimeAccumulator.empty());
+//        me.createSpecialAccumulator(LogRareEventsAccumulator.LOG_RARE_EVENTS_NAME, (AccumulatorParam<LogRareEventsAccumulator>)LogRareEventsAccumulator.PARAM_INSTANCE, LogRareEventsAccumulator.empty());
+//        me.createSpecialAccumulator(MEMORY_ACCUMULATOR_NAME, MemoryUseAccumulator.PARAM_INSTANCE, MemoryUseAccumulator.empty());
+//        me.createSpecialAccumulator(GCTimeAccumulator.GCTIME_ACCUMULATOR_NAME,
+//                GCTimeAccumulator.PARAM_INSTANCE, GCTimeAccumulator.empty());
 
 //        for (int i = 0; i < MAX_TRACKED_THREADS; i++) {
 //            //noinspection AccessStaticViaInstance
@@ -140,7 +140,8 @@ public class SparkAccumulators implements ISparkAccumulators {
         if (accumulators.get(acc) != null)
             return accumulators.get(acc); // already done - should an exception be thrown
         JavaSparkContext currentContext = SparkUtilities.getCurrentContext();
-        Accumulator<Long> accumulator = currentContext.accumulator(0L, acc, LongAccumulableParam.INSTANCE);
+        AccumulatorParam<Long> instance = LongAccumulableParam.INSTANCE;
+        Accumulator<Long> accumulator = currentContext.accumulator(0L, acc, instance);
 
         accumulators.put(acc, accumulator);
         return accumulators.get(acc); // already done - should an exception be thrown

@@ -75,7 +75,7 @@ public class SparkContextGetter {
         if (ret != null)
             return ret;
         SparkConf sparkConf = new SparkConf();
-        sparkConf.set("spark.kryo.registrator", "com.lordjoe.distributed.hydra.HydraKryoSerializer");
+      //  sparkConf.set("spark.kryo.registrator", "com.lordjoe.distributed.hydra.HydraKryoSerializer");
         sparkConf.set("mySparkProperty", "xyzzy");
         sparkConf.setAppName("Some App");
         //  SparkUtilities.guaranteeSparkMaster(sparkConf);

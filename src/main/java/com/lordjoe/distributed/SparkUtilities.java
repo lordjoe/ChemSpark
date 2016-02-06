@@ -394,6 +394,7 @@ public class SparkUtilities implements Serializable {
             sparkConf.set("spark.serializer", "org.apache.spark.serializer.JavaSerializer");   // todo use kryo
          else {
              if(option.get().equals("org.apache.spark.serializer.KryoSerializer"))
+                 sparkConf.set("spark.serializer", "org.apache.spark.serializer.JavaSerializer");   // todo use kryo
                    sparkConf.set("spark.kryo.registrator", "com.lordjoe.distributed.hydra.HydraKryoSerializer");
             }
         // if we use Kryo register classes

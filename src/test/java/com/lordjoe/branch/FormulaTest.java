@@ -1,6 +1,7 @@
 package com.lordjoe.branch;
 
 import com.lordjoe.distributed.*;
+import com.lordjoe.distributed.spark.accumulators.*;
 import com.lordjoe.molgen.*;
 import com.lordjoe.utilities.*;
 import org.apache.log4j.*;
@@ -26,10 +27,9 @@ public class FormulaTest {
 
         Properties sparkProperties = SparkUtilities.getSparkProperties();
 
-
-
-        SparkConf sparkConf = new SparkConf();
+         SparkConf sparkConf = new SparkConf();
   //      sparkConf.set("spark.default.parallelism","1"); // one thread until we get the right answer
+        SparkAccumulators.createInstance();
 
         sparkConf.setAppName("Count instances of " + formula);
 
@@ -37,7 +37,8 @@ public class FormulaTest {
         if (!option.isDefined()) {   // use local over nothing
             sparkConf.setMaster("local[*]");
         }
-     SparkAtomGenerator generator = new SparkAtomGenerator(formula);
+        SparkAccumulatorCountingHandler handler = new SparkAccumulatorCountingHandler(formula);
+        SparkAtomGenerator generator = new SparkAtomGenerator(formula, handler);
       //  SparkAccumulatorCountingHandler handler = new SparkAccumulatorCountingHandler(formula);
       //  generator.addHandler(handler);
 

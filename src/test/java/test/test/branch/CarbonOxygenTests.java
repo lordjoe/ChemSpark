@@ -1,7 +1,7 @@
 package test.test.branch;
 
+import com.lordjoe.branch.*;
 import junit.framework.Assert;
-
 import org.junit.Test;
 
 public class CarbonOxygenTests extends FormulaTest {

@@ -1,10 +1,11 @@
 package test.test.branch;
 
+import com.lordjoe.branch.*;
 import junit.framework.Assert;
-
 import org.junit.Test;
 
-public class CarbonNitrogenTests extends FormulaTest {
+public class
+CarbonNitrogenTests extends FormulaTest {
     
     @Test
     public void cHNTest() {

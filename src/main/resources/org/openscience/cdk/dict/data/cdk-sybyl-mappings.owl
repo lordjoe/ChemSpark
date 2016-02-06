@@ -96,6 +96,9 @@
   <owl:Thing rdf:about="&cdkat;C.sp">
     <atm:equivalentAsType rdf:resource="&sybylat;C.1"/>
   </owl:Thing>
+  <owl:Thing rdf:about="&cdkat;C.allene">
+      <atm:equivalentAsType rdf:resource="&sybylat;C.1"/>
+    </owl:Thing>
   <owl:Thing rdf:about="&cdkat;C.sp2">
     <atm:equivalentAsType rdf:resource="&sybylat;C.2"/>
   </owl:Thing>
@@ -179,6 +182,9 @@
   </owl:Thing>
   <owl:Thing rdf:about="&cdkat;N.sp2">
     <atm:equivalentAsType rdf:resource="&sybylat;N.2"/>
+  </owl:Thing>
+  <owl:Thing rdf:about="&cdkat;N.sp2.3">
+    <atm:equivalentAsType rdf:resource="&sybylat;N.pl3"/>
   </owl:Thing>
   <owl:Thing rdf:about="&cdkat;N.planar3">
     <atm:equivalentAsType rdf:resource="&sybylat;N.pl3"/>
@@ -461,6 +467,12 @@
   </owl:Thing>
   <owl:Thing rdf:about="&cdkat;Se.3">
     <atm:equivalentAsType rdf:resource="&sybylat;Se"/>
+  </owl:Thing>
+  <owl:Thing rdf:about="&cdkat;Mo.metallic">
+    <atm:equivalentAsType rdf:resource="&sybylat;Mo"/>
+  </owl:Thing>
+  <owl:Thing rdf:about="&cdkat;Mo.4">
+    <atm:equivalentAsType rdf:resource="&sybylat;Mo"/>
   </owl:Thing>
 
 </rdf:RDF>

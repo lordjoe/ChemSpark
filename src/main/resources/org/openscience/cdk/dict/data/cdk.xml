@@ -4,7 +4,7 @@
 
   xmlns:cvs="https://www.cvshome.org/"
   
-  namespace="http://cdk.sf.net/dict"
+  namespace="http://org.openscience.cdk.cdk.sf.net/dict"
   id="cdk" title="The Chemistry Development Kit Dictionary">
 
   <annotation>

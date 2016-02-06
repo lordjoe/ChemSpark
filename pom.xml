@@ -26,6 +26,34 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.gilleain.moleculegen</groupId>
+            <artifactId>moleculegen</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                     <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>slf4j-nop</artifactId>
+                     </exclusion>
+                     <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>slf4j-simple</artifactId>
+                     </exclusion>
+                     <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>slf4j-api</artifactId>
+                     </exclusion>
+                     <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>jcl-over-slf4j</artifactId>
+                     </exclusion>
+                 </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.lordjoe.distributed</groupId>
+             <artifactId>SparkAccumulators</artifactId>
+             <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>
             <version>4.10</version>
@@ -38,96 +66,30 @@
             <version>1.7.5</version>
         </dependency>
 
-        <!--
         <dependency>
-            <groupId>com.lordjoe.distributed</groupId>
-            <artifactId>SparkAccumulators</artifactId>
-            <version>0.1-SNAPSHOT</version>
+        	<groupId>org.apache.spark</groupId>
+        	<artifactId>spark-core_2.11</artifactId>
+        	<version>1.6.0</version>
             <exclusions>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-nop</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-simple</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-api</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>jcl-over-slf4j</artifactId>
-                   </exclusion>
-               </exclusions>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-             <groupId>org.slf4j</groupId>
-             <artifactId>slf4j-api</artifactId>
-             <version>1.7.5</version>
-         </dependency>
-
-         <dependency>
-             <groupId>org.slf4j</groupId>
-             <artifactId>slf4j-simple</artifactId>
-             <version>1.7.5</version>
-         </dependency>
-
-            <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-        <dependency>
-               <groupId>org.slf4j</groupId>
-               <artifactId>slf4j-log4j12</artifactId>
-               <version>1.5.2</version>
-           </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.12</version>
-        </dependency>
-
-
-               <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
-            <version>1.5.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-nop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
+                 <exclusion>
+                     <groupId>org.slf4j</groupId>
+                     <artifactId>slf4j-nop</artifactId>
+                 </exclusion>
+                 <exclusion>
+                     <groupId>org.slf4j</groupId>
+                     <artifactId>slf4j-api</artifactId>
+                 </exclusion>
+                 <exclusion>
+                     <groupId>org.slf4j</groupId>
+                     <artifactId>jcl-over-slf4j</artifactId>
+                 </exclusion>
+             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.11</artifactId>
-            <version>1.5.1</version>
+            <version>1.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -143,52 +105,36 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
 
         <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-            <version>2.6.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-nop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-xml</artifactId>
+            <version>2.11.0-M4</version>
         </dependency>
-
-        -->
-
         <!-- needed for annotations SLewis -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>2.0.1</version>
             <exclusions>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-nop</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-simple</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-api</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>jcl-over-slf4j</artifactId>
-                   </exclusion>
-               </exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-nop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- needed for IteratorIterable SLewis -->
@@ -243,71 +189,76 @@
 
 
         <!--
+          <dependency>
+              <groupId>org.openscience.cdk</groupId>
+              <artifactId>cdk</artifactId>
+              <version>1.5.12</version>
+          </dependency>
+          -->
+        <!--
         <dependency>
             <groupId>org.openscience.cdk</groupId>
-            <artifactId>cdk</artifactId>
-            <version>1.5.11</version>
+            <artifactId>cdk-core</artifactId>
+            <version>1.5.12</version>
         </dependency>
-          <dependency>
-             <groupId>org.openscience.cdk</groupId>
-             <artifactId>cdk-core</artifactId>
-             <version>1.5.11</version>
-         </dependency>
         <dependency>
-             <groupId>org.openscience.cdk</groupId>
-             <artifactId>cdk-interfaces</artifactId>
-             <version>1.5.11</version>
-         </dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-interfaces</artifactId>
+            <version>1.5.12</version>
+        </dependency>
         <dependency>
-               <groupId>org.openscience.cdk</groupId>
-               <artifactId>cdk-formula</artifactId>
-               <version>1.5.11</version>
-           </dependency>
-          <dependency>
-             <groupId>org.openscience.cdk</groupId>
-             <artifactId>cdk-annotation</artifactId>
-             <version>1.5.11</version>
-         </dependency>
-          <dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-formula</artifactId>
+            <version>1.5.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-annotation</artifactId>
+            <version>1.5.12</version>
+        </dependency>
+        <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-standard</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-io</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-silent</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-signature</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
         <dependency>
-              <groupId>org.openscience.cdk</groupId>
-              <artifactId>cdk-signature</artifactId>
-              <version>1.5.11</version>
-          </dependency>
-          <dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-annotation</artifactId>
+            <version>1.5.12</version>
+        </dependency>
+        <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-smiles</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
-           -->
+        -->
+        <!--
           <dependency>
+            <groupId>org.openscience.cdk</groupId>
+            <artifactId>cdk-tool</artifactId>
+            <version>1.5.12</version>
+        </dependency>
+
+         -->
+        <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
             <version>1.2</version>
-        </dependency>
-        <dependency>
-        	<groupId>org.openscience.cdk</groupId>
-        	<artifactId>cdk-tool</artifactId>
-        	<version>1.5.10</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
@@ -323,7 +274,22 @@
             <groupId>javax.vecmath</groupId>
             <artifactId>vecmath</artifactId>
             <version>1.5.2</version>
-          </dependency>
+        </dependency>
+        <dependency>
+            <groupId>com.lordjoe.distributed</groupId>
+            <artifactId>SparkAccumulators</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.gilleain.moleculegen</groupId>
+            <artifactId>moleculegen</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.gilleain.moleculegen</groupId>
+            <artifactId>moleculegen</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -339,8 +305,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
