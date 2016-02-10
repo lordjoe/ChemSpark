@@ -23,6 +23,8 @@ import java.util.*;
 
 public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
 
+    private final String elementFormula;
+
     private SparkAtomAugmentor augmentor;
 
     private Handler<IAtomContainer> handler;
@@ -41,6 +43,7 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
 
     public SparkAtomGenerator(String elementFormula, Handler<IAtomContainer> handler) {
         // XXX - parse the formula once and pass down the parser!
+        this.elementFormula = elementFormula;
         this.initialConstraints = new ElementConstraints(elementFormula);
 
         this.hCountValidator = new HCountValidator(elementFormula);
@@ -100,15 +103,15 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
         aug1 = SparkUtilities.persistAndCount("Before Filter", aug1, counts);
         theCount = counts[0];
 
-        IsMoleculeConnected moleculeConnected = new IsMoleculeConnected();
+        IsMoleculeConnected moleculeConnected = new IsMoleculeConnected(elementFormula,maxIndex);
         aug1 = aug1.filter(moleculeConnected);
 
         aug1 = SparkUtilities.persistAndCount("After Connected Filter", aug1, counts);
         theCount = counts[0];
-        List<AtomAugmentation> collect = aug1.collect();
-        for (AtomAugmentation atomAugmentation : collect) {
-            System.out.println(CDKUtilities.atomAugmentationToString(atomAugmentation));
-        }
+//        List<AtomAugmentation> collect = aug1.collect();
+//        for (AtomAugmentation atomAugmentation : collect) {
+//            System.out.println(CDKUtilities.atomAugmentationToString(atomAugmentation));
+//        }
 
         setCounter((int) theCount);
         System.out.println("Count is " + theCount);
@@ -162,13 +165,22 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
      * call handler for all valid molecules and return false (no more processing )
      * return true for all other cases
      */
-    private class IsMoleculeConnected extends AbstractLoggingFunction<AtomAugmentation, Boolean> {
+    private static class IsMoleculeConnected extends AbstractLoggingFunction<AtomAugmentation, Boolean> {
+        private final String elementFormula;
+        private final int maxIndex;
+        private transient HCountValidator hCountValidator;
 
+        public IsMoleculeConnected(String elementFormula, int maxIndex) {
+            this.elementFormula = elementFormula;
+            this.maxIndex = maxIndex;
+        }
 
         @Override
         public Boolean doCall(final AtomAugmentation v1) throws Exception {
             IAtomContainer atomContainer = v1.getAugmentedObject();
-            return handleValidConnectedMolecule(atomContainer);
+            if(hCountValidator == null)
+                hCountValidator = new HCountValidator(elementFormula);
+            return hCountValidator.isValidMol(atomContainer,maxIndex + 1);
         }
 
 
