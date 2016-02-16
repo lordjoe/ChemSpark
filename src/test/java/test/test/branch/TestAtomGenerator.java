@@ -62,26 +62,26 @@ public class TestAtomGenerator {
         System.out.println(count);
     }
 
-    // @Test     Slewis commented out not working
+    @Test  //   Slewis commented out not working
     public void testC4H8() {
-        SparkAtomGenerator gen = new SparkAtomGenerator("C4H8", new PrintStreamHandler(System.out));
+        SparkAtomGenerator gen = new SparkAtomGenerator("C4H8", new SystemOutPrintHandler());
         gen.run();
     }
 
-    // @Test     Slewis commented out not working
+     @Test  //   Slewis commented out not working
     public void testCH5N() {
-        SparkAtomGenerator gen = new SparkAtomGenerator("CH5N", new PrintStreamHandler(System.out));
+        SparkAtomGenerator gen = new SparkAtomGenerator("CH5N", new SystemOutPrintHandler());
         gen.run();
     }
 
-    // @Test     Slewis commented out not working
+   @Test  //   Slewis commented out not working
     public void testCH5NFromAtom() {
-        new SparkAtomGenerator("CH5N", new PrintStreamHandler(System.out)).run();
+        new SparkAtomGenerator("CH5N", new SystemOutPrintHandler()).run();
     }
 
-    // @Test     Slewis commented out not working
+    @Test  //   Slewis commented out not working
     public void testC2H2N2FromAtom() {
-        new SparkAtomGenerator("C2H2N2", new PrintStreamHandler(System.out)).run();
+        new SparkAtomGenerator("C2H2N2",new SystemOutPrintHandler()).run();
     }
 
     private void printDups(DuplicateHandler handler) {
@@ -98,7 +98,7 @@ public class TestAtomGenerator {
         }
     }
 
-    // @Test     Slewis commented out not working
+    @Test    // Slewis commented out not working
     public void testDups() {
         DuplicateHandler handler = new DuplicateHandler();
         run("C4H6", "C0C1 0:1(1)", handler);
