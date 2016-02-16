@@ -11,7 +11,7 @@ import java.util.*;
  * copy of AtomAugmentor augmented to return results as a JavaRDD as well as a list
  * SLewis
  */
-public class SparkAtomAugmentor  implements ISparkAugmentor {
+public class SparkAtomAugmentor implements ISparkAugmentor {
 
     private AtomAugmentor augmentor;
 
@@ -32,11 +32,9 @@ public class SparkAtomAugmentor  implements ISparkAugmentor {
     }
 
 
-
-     public JavaRDD<AtomAugmentation>  sparkAugment(List<AtomAugmentation>  augment) {
-              JavaSparkContext currentContext = SparkUtilities.getCurrentContext();
-         JavaRDD<AtomAugmentation> ret = currentContext.parallelize(augment);
-
+    public JavaRDD<AtomAugmentation> sparkAugment(List<AtomAugmentation> augment) {
+        JavaSparkContext currentContext = SparkUtilities.getCurrentContext();
+        JavaRDD<AtomAugmentation> ret = currentContext.parallelize(augment);
          return ret;
     }
 

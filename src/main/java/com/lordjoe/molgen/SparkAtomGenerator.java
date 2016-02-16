@@ -80,8 +80,15 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
     public static final int MAX_PARITIONS = 800;     // was 120 - lets try more
 
     public void run(AtomAugmentation init, int index) {
-
-        List<AtomAugmentation> augment = augmentor.augment(init);
+        List<AtomAugmentation> augment = new ArrayList<AtomAugmentation>();
+        for (IAtomContainer start : initialStateSource.get()) {
+            String symbol = start.getAtom(0).getSymbol();
+            ElementConstraints minus = initialConstraints.minus(symbol);
+            AtomAugmentation parent = new AtomAugmentation(start, minus);
+            List<AtomAugmentation> oneAugment = augmentor.augment(parent);
+            augment.addAll(oneAugment);
+        }
+  //      List<AtomAugmentation> augment = augmentor.augment(init);
         int numberAtoms = augment.size();
         int numberPartitions = numberAtoms;
         JavaSparkContext currentContext = SparkUtilities.getCurrentContext();
