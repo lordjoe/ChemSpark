@@ -15,7 +15,7 @@ import static io.AtomContainerPrinter.*;
 
 public class TestAtomGenerator {
 
-    private IChemObjectBuilder builder = SilentChemObjectBuilder.getInstance();
+    private IChemObjectBuilder builder =  FastChemObjectBuilder.getInstance();   // changed SLewis for control
 
     private void run(String elementFormula, String fromString, Handler handler) {
         SparkAtomGenerator gen = new SparkAtomGenerator(elementFormula, handler);

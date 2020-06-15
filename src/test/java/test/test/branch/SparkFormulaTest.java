@@ -1,20 +1,15 @@
 package test.test.branch;
 
-import augment.atom.AtomGenerator;
 import com.lordjoe.distributed.SparkUtilities;
 import com.lordjoe.distributed.spark.accumulators.SparkAccumulators;
 import com.lordjoe.molgen.SparkAccumulatorCountingHandler;
 import com.lordjoe.molgen.SparkAtomGenerator;
 import com.lordjoe.utilities.ElapsedTimer;
-import handler.molecule.DuplicateCountingHandler;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import scala.Option;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**

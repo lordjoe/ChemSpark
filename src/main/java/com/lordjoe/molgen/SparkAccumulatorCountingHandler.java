@@ -1,7 +1,7 @@
 package com.lordjoe.molgen;
 
 import com.lordjoe.distributed.spark.accumulators.*;
-import handler.*;
+import handler.Handler;
 import org.apache.spark.*;
 import org.openscience.cdk.interfaces.*;
 

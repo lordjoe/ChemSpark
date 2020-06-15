@@ -18,7 +18,7 @@ public class TestAtomAugmentor {
        //private static IChemObjectBuilder builderX = SilentChemObjectBuilder.getInstance();
 
         public static IChemObjectBuilder getBuilder() {
-            return SilentChemObjectBuilder.getInstance();
+            return  FastChemObjectBuilder.getInstance();   // changed SLewis for control
         }
 
 

@@ -27,13 +27,13 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
 
     private SparkAtomAugmentor augmentor;
 
-    private Handler<IAtomContainer> handler;
+    private handler.Handler<IAtomContainer> handler;
 
     private int maxIndex;
 
-    private HCountValidator hCountValidator;
+    private transient HCountValidator hCountValidatorX;
 
-    private AtomCanonicalChecker canonicalChecker;
+//    private AtomCanonicalChecker canonicalChecker;
 
     private ElementConstraints initialConstraints;
 
@@ -41,15 +41,15 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
 
     private int counter;
 
-    public SparkAtomGenerator(String elementFormula, Handler<IAtomContainer> handler) {
+    public SparkAtomGenerator(String elementFormula, handler.Handler<IAtomContainer> handler) {
         // XXX - parse the formula once and pass down the parser!
         this.elementFormula = elementFormula;
         this.initialConstraints = new ElementConstraints(elementFormula);
 
-        this.hCountValidator = new HCountValidator(elementFormula);
         initialStateSource = new ElementConstraintSource(initialConstraints);
+        HCountValidator hCountValidator = getHCountValidator();
         this.augmentor = new SparkAtomAugmentor(hCountValidator.getElementSymbols());
-        this.canonicalChecker = new AtomCanonicalChecker();
+        //      this.canonicalChecker = new AtomCanonicalChecker();
         this.handler = handler;
         this.maxIndex = hCountValidator.getElementSymbols().size() - 1;
     }
@@ -77,7 +77,7 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
         run(new AtomAugmentation(initial, remaining), 0);
     }
 
-    public static final int MAX_PARITIONS = 800;     // was 120 - lets try more
+    public static final int MAX_PARITIONS = 3200;     // was 120 - lets try more
 
     public void run(AtomAugmentation init, int index) {
         List<AtomAugmentation> augment = new ArrayList<AtomAugmentation>();
@@ -88,19 +88,23 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
             List<AtomAugmentation> oneAugment = augmentor.augment(parent);
             augment.addAll(oneAugment);
         }
-  //      List<AtomAugmentation> augment = augmentor.augment(init);
+        //      List<AtomAugmentation> augment = augmentor.augment(init);
         int numberAtoms = augment.size();
         int numberPartitions = numberAtoms;
         JavaSparkContext currentContext = SparkUtilities.getCurrentContext();
 
+        IsCanonical test = new IsCanonical();
+
         JavaRDD<AtomAugmentation> aug1 = augmentor.sparkAugment(augment);
         for (int i = index + 1; i < maxIndex; i++) {
-            aug1 = aug1.flatMap(new HandleOneLevelAugmentation(i));
-            if (numberPartitions < MAX_PARITIONS) {
-                numberPartitions *= numberAtoms;
-            }
-            else {
-                numberPartitions = (int) (1.3 * numberPartitions);
+            if (i < maxIndex - 2) {
+                aug1 = aug1.flatMap(new HandleTwoLevelsAugmentation(test));
+                numberPartitions = recomputePartitions(numberAtoms, numberPartitions);
+                numberPartitions = recomputePartitions(numberAtoms, numberPartitions);
+                i++;
+            } else {
+                aug1 = aug1.flatMap(new HandleOneLevelAugmentation(i, test));
+                numberPartitions = recomputePartitions(numberAtoms, numberPartitions);
             }
             if (i < (maxIndex - 1))
                 aug1 = aug1.repartition(numberPartitions); // spread the work
@@ -110,22 +114,36 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
         aug1 = SparkUtilities.persistAndCount("Before Filter", aug1, counts);
         theCount = counts[0];
 
-        IsMoleculeConnected moleculeConnected = new IsMoleculeConnected(elementFormula,maxIndex);
+        IsMoleculeConnected moleculeConnected = new IsMoleculeConnected(elementFormula, maxIndex);
         aug1 = aug1.filter(moleculeConnected);
 
-          aug1 = SparkUtilities.persistAndCount("After Connected Filter", aug1, counts);
+        aug1 = SparkUtilities.persistAndCount("After Connected Filter", aug1, counts);
         theCount = counts[0];
+        if (false)
+            showStructures(aug1, theCount);
+
+        setCounter((int) theCount);
+        System.out.println("Count is " + theCount);
+    }
+
+    public int recomputePartitions(int numberAtoms, int numberPartitions) {
+        if (numberPartitions < MAX_PARITIONS) {
+            numberPartitions *= numberAtoms;
+        } else {
+            numberPartitions = (int) (1.3 * numberPartitions);
+        }
+        return numberPartitions;
+    }
+
+    public void showStructures(JavaRDD<AtomAugmentation> aug1, long theCount) {
         List<AtomAugmentation> collect = aug1.collect();
         int count2 = collect.size();
-        if(theCount != count2)
+        if (theCount != count2)
             throw new IllegalStateException("different Answers");
 
         for (AtomAugmentation atomAugmentation : collect) {
             System.out.println(CDKUtilities.atomAugmentationToString(atomAugmentation));
         }
-
-        setCounter((int) theCount);
-        System.out.println("Count is " + theCount);
     }
 
 //
@@ -172,6 +190,13 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
         return handler;
     }
 
+    public HCountValidator getHCountValidator() {
+        if (hCountValidatorX == null) {
+            hCountValidatorX = new HCountValidator(elementFormula);
+        }
+        return hCountValidatorX;
+    }
+
     /**
      * call handler for all valid molecules and return false (no more processing )
      * return true for all other cases
@@ -189,9 +214,9 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
         @Override
         public Boolean doCall(final AtomAugmentation v1) throws Exception {
             IAtomContainer atomContainer = v1.getAugmentedObject();
-            if(hCountValidator == null)
+            if (hCountValidator == null)
                 hCountValidator = new HCountValidator(elementFormula);
-            return hCountValidator.isValidMol(atomContainer,maxIndex + 1);
+            return hCountValidator.isValidMol(atomContainer, maxIndex + 1);
         }
 
 
@@ -214,6 +239,7 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
     }
 
     protected Boolean handleValidConnectedMolecule(final IAtomContainer pAtomContainer) {
+        HCountValidator hCountValidator = getHCountValidator();
         boolean validMol = hCountValidator.isValidMol(pAtomContainer, maxIndex + 1);
         return validMol;
     }
@@ -235,29 +261,54 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
     }
 
     protected Boolean handleHydrogensCorrect(final IAtomContainer pAtomContainer) {
+        HCountValidator hCountValidator = getHCountValidator();
         boolean validMol = hCountValidator.hydrogensCorrect(pAtomContainer);
         return validMol;
+    }
+
+    /**
+     * call handler for canonical - I hope to use this to profile time in canonical tests
+     */
+    private static class IsCanonical extends AbstractLoggingFunction<AtomAugmentation, Boolean> {
+
+        private transient AtomCanonicalChecker canonicalChecker;
+
+        private AtomCanonicalChecker getCannonicalChecker() {
+            if (canonicalChecker == null)
+                canonicalChecker = new AtomCanonicalChecker();
+            return canonicalChecker;
+        }
+
+        @Override
+        public Boolean doCall(final AtomAugmentation x) throws Exception {
+            return getCannonicalChecker().isCanonical(x);
+        }
+
+
     }
 
 
     private class HandleOneLevelAugmentation extends AbstractLoggingFlatMapFunction<AtomAugmentation, AtomAugmentation> {
         public final int index;
-        private transient AtomCanonicalChecker canonicalChecker;
+        private final IsCanonical canonicalTest;
+        //      private transient AtomCanonicalChecker canonicalChecker;
 
-        public HandleOneLevelAugmentation(final int pIndex) {
+        public HandleOneLevelAugmentation(final int pIndex, IsCanonical canonicalTest) {
             index = pIndex;
+            this.canonicalTest = canonicalTest;
         }
 
-        private AtomCanonicalChecker getCannonicalChecker()
-        {
-           if(canonicalChecker == null)
-               canonicalChecker =  new AtomCanonicalChecker();
-            return canonicalChecker;
-        }
+//        private AtomCanonicalChecker getCannonicalChecker()
+//        {
+//           if(canonicalChecker == null)
+//               canonicalChecker =  new AtomCanonicalChecker();
+//            return canonicalChecker;
+//        }
 
         @Override
         public Iterable<AtomAugmentation> doCall(final AtomAugmentation t) throws Exception {
 
+            HCountValidator hCountValidator = getHCountValidator();
             List<AtomAugmentation> ret = new ArrayList<AtomAugmentation>();
             if (index >= maxIndex) {
                 IAtomContainer atomContainer = t.getAugmentedObject();
@@ -273,10 +324,9 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
 //                    AtomGenerator.showArrayAndIndex(index, augment);
 
             for (AtomAugmentation x : augment) {
-                if (getCannonicalChecker().isCanonical(x) ) {
+                if (canonicalTest.call(x)) {
                     ret.add(x);
-                }
-                else {
+                } else {
                     //  x.isCanonical(); // repeat to check
                     XTandemUtilities.breakHere();
                 }
@@ -286,7 +336,53 @@ public class SparkAtomGenerator implements AugmentingGenerator<IAtomContainer> {
     }
 
 
+    private class HandleTwoLevelsAugmentation extends AbstractLoggingFlatMapFunction<AtomAugmentation, AtomAugmentation> {
+        private final IsCanonical canonicalTest;
+
+
+        public HandleTwoLevelsAugmentation(IsCanonical test) {
+            canonicalTest = test;
+        }
+
+
+        @Override
+        public Iterable<AtomAugmentation> doCall(final AtomAugmentation t) throws Exception {
+
+            List<AtomAugmentation> ret = new ArrayList<AtomAugmentation>();
+
+            List<AtomAugmentation> atomAugmentations = augmentOneLevel(t);
+            for (AtomAugmentation ax : atomAugmentations) {
+                ret.addAll(augmentOneLevel(ax));
+            }
+            return ret;
+        }
+
+        public List<AtomAugmentation> augmentOneLevel(AtomAugmentation t) {
+            try {
+                List<AtomAugmentation> ret = new ArrayList<>();
+                List<AtomAugmentation> augment = augmentor.augment(t);
+//               if (false && AtomGenerator.VERBOSE)
+//                    AtomGenerator.showArrayAndIndex(index, augment);
+
+                for (AtomAugmentation x : augment) {
+                    if (canonicalTest.call(x)) {
+                        ret.add(x);
+                    } else {
+                        //  x.isCanonical(); // repeat to check
+                        XTandemUtilities.breakHere();
+                    }
+                }
+                return ret;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+
+            }
+        }
+    }
+
+
     protected Boolean handleValidMolecule(final IAtomContainer pAtomContainer) {
+        HCountValidator hCountValidator = getHCountValidator();
         boolean validMol = hCountValidator.isValidMol(pAtomContainer, maxIndex + 1);
         return validMol;
     }

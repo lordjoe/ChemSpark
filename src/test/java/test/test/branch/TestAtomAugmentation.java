@@ -21,7 +21,7 @@ public class TestAtomAugmentation {
       //private static IChemObjectBuilder builderX = SilentChemObjectBuilder.getInstance();
 
        public static IChemObjectBuilder getBuilder() {
-           return SilentChemObjectBuilder.getInstance();
+           return  FastChemObjectBuilder.getInstance();   // changed SLewis for control
        }
 
     private IAtomContainer make(String acpString) {

@@ -2,8 +2,7 @@ package com.lordjoe.distributed;
 
 import com.lordjoe.algorithms.*;
 import com.lordjoe.distributed.database.*;
- import com.lordjoe.distributed.spark.JavaSparkListener;
-import com.lordjoe.distributed.spark.*;
+import com.lordjoe.distributed.spark.SparkBroadcastObjects;
 import com.lordjoe.distributed.spark.accumulators.*;
 import com.lordjoe.distributed.spark.accumulators.CountedItem;
 import org.apache.hadoop.conf.*;
@@ -414,7 +413,7 @@ public class SparkUtilities implements Serializable {
 
         SparkContext sparkContext = JavaSparkContext.toSparkContext(ret);
 
-        sparkContext.addSparkListener(new JavaSparkListener());
+        sparkContext.addSparkListener(new org.apache.spark.JavaSparkListener());
 
         threadContext = ret;
 

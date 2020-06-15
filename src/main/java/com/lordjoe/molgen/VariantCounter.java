@@ -10,7 +10,7 @@ import org.apache.spark.SparkConf;
 import org.openscience.cdk.DynamicFactory;
 import org.openscience.cdk.exception.NoSuchAtomTypeException;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.silent.FastChemObjectBuilder;
 import scala.Option;
 
 import java.util.Properties;
@@ -58,7 +58,7 @@ public class VariantCounter {
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        IChemObjectBuilder forcewLoad1 = SilentChemObjectBuilder.getInstance();
+        IChemObjectBuilder forcewLoad1 =  FastChemObjectBuilder.getInstance();   // changed SLewis for control
         DynamicFactory forceLoad2 = new DynamicFactory(200);
         NoSuchAtomTypeException forceLoad3 = new NoSuchAtomTypeException("foo");
 
